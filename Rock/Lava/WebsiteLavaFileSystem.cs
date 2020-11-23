@@ -25,7 +25,7 @@ namespace Rock.Lava
     /// <summary>
     /// The file system used to retrieve Lava templates referenced by an include tag.
     /// </summary>
-    public class LavaFileSystem : LavaFileSystemBase
+    public class WebsiteLavaFileSystem : LavaFileSystemBase
     {
         /// <summary>
         /// Resolves the absolute path for the input template.

@@ -32,6 +32,15 @@ namespace Rock.Tests.Integration.Lava
     {
         public static LavaTestHelper New( LavaEngineTypeSpecifier? engineType = null )
         {
+            engineType = engineType ?? LavaEngineTypeSpecifier.DotLiquid;
+
+            ILavaFileSystem fileSystem = null;
+
+            if ( engineType == LavaEngineTypeSpecifier.DotLiquid )
+            {
+                fileSystem = new LavaFileSystem( new MockFileProvider() );
+            }
+
             global::Rock.Lava.LavaEngine.Initialize( engineType, null, new List<Type> { typeof( RockFilters ) } );
 
             var engine = global::Rock.Lava.LavaEngine.Instance;
@@ -260,6 +269,7 @@ namespace Rock.Tests.Integration.Lava
                 expectedOutput = Regex.Replace( expectedOutput, @"\s*", string.Empty );
             }
 
+            WriteTemplateOutputToDebug( outputString );
             Assert.That.Equal( expectedOutput, outputString );
         }
 
@@ -278,7 +288,19 @@ namespace Rock.Tests.Integration.Lava
                 expectedOutput = Regex.Replace( expectedOutput, @"\s*", string.Empty );
             }
 
+            WriteTemplateOutputToDebug( outputString );
             Assert.That.Equal( expectedOutput, outputString );
+        }
+
+        /// <summary>
+        /// Write a rendered template to debug, with some additional configuration details.
+        /// </summary>
+        /// <param name="outputString"></param>
+        public void WriteTemplateOutputToDebug( string outputString )
+        {
+            var engineName = global::Rock.Lava.LavaEngine.Instance.EngineName;
+
+            Debug.Print( $"\n**\n** Template Output ({engineName}):\n**\n{outputString}" );
         }
 
         /// <summary>
@@ -292,6 +314,7 @@ namespace Rock.Tests.Integration.Lava
 
             var regex = new Regex(expectedOutputRegex);
 
+            WriteTemplateOutputToDebug( outputString );
             StringAssert.Matches( outputString, regex );
         }
 
@@ -320,6 +343,7 @@ namespace Rock.Tests.Integration.Lava
 
             var regex = new Regex( expectedOutput );
 
+            WriteTemplateOutputToDebug( outputString );
             StringAssert.Matches( outputString, regex );
         }
 
@@ -340,6 +364,7 @@ namespace Rock.Tests.Integration.Lava
             
             var regex = new Regex( expectedOutputRegex );
 
+            WriteTemplateOutputToDebug( outputString );
             StringAssert.Matches( outputString, regex );
         }
 
@@ -352,6 +377,8 @@ namespace Rock.Tests.Integration.Lava
         public void AssertTemplateOutputDate( DateTime? expectedDateTime, string inputTemplate, TimeSpan? maximumDelta = null )
         {
             var outputString = GetTemplateOutput( inputTemplate );
+
+            WriteTemplateOutputToDebug( outputString );
 
             DateTime outputDate;
 

@@ -14,12 +14,24 @@
 // limitations under the License.
 // </copyright>
 //
-namespace Rock.Data
+using Fluid;
+using Irony.Parsing;
+
+namespace Rock.Lava.Fluid
 {
     /// <summary>
-    /// Marks a property as being inaccessible to a Lava template if an object of the type exists in the Lava context.
+    /// A wrapper for a Lava Block that can be rendered by the Fluid templating engine.
     /// </summary>
-    public class LavaIgnoreAttribute : System.Attribute
+    /// <remarks>
+
+
+    public class LavaGrammar : FluidGrammar
     {
+        public override void OnGrammarDataConstructed( LanguageData language )
+        {
+            base.OnGrammarDataConstructed( language );
+
+            FilterArguments.Rule |= MakeListRule( FilterArguments, ToTerm(" "), FilterArgument );
+        }
     }
 }

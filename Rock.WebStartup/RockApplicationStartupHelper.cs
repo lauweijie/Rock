@@ -587,7 +587,7 @@ namespace Rock.WebStartup
 
             if ( engineType == LavaEngineTypeSpecifier.DotLiquid )
             {
-                LavaEngine.InitializeDotLiquidFramework( new LavaFileSystem(), new List<Type> { typeof( Rock.Lava.RockFilters ) } );
+                LavaEngine.InitializeDotLiquidFramework( new WebsiteLavaFileSystem(), new List<Type> { typeof( Rock.Lava.RockFilters ) } );
             }
             else
             {

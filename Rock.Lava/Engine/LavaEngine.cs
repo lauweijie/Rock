@@ -4,9 +4,12 @@ using Rock.Lava.DotLiquid;
 using Rock.Lava.Blocks;
 using System.IO;
 using Rock.Lava.Fluid;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
 
 namespace Rock.Lava
 {
+
     /// <summary>
     /// Provides access to core functions for the Rock Lava Engine.
     /// </summary>
@@ -55,6 +58,8 @@ namespace Rock.Lava
             if ( _liquidFramework == LavaEngineTypeSpecifier.Fluid )
             {
                 engine = new FluidEngine();
+
+                fileSystem = new
             }
             else
             {
@@ -64,6 +69,37 @@ namespace Rock.Lava
             engine.Initialize( fileSystem, filterImplementationTypes );
 
             _instance = engine;
+        }
+
+        /// <summary>
+        /// An implementation of a Lava File System for the Fluid framework.
+        /// </summary>
+        public class FluidLavaFileSystem : IFileProvider
+        {
+            private ILavaFileSystem _fileSystem = null;
+
+            public FluidLavaFileSystem( ILavaFileSystem fileSystem )
+            {
+                _fileSystem = fileSystem;
+            }
+
+            public IDirectoryContents GetDirectoryContents( string subpath )
+            {
+                // Directory listing is not supported.
+                return null;
+
+            }
+
+            public IFileInfo GetFileInfo( string subpath )
+            {
+                var text = _fileSystem.ReadTemplateFile( null, subpath );
+            }
+
+            public IChangeToken Watch( string filter )
+            {
+                // File system monitoring is not supported.
+                return null;
+            }
         }
 
         public static ILavaEngine Instance

@@ -4,6 +4,10 @@ using Rock.Lava.Shortcodes;
 
 namespace Rock.Lava
 {
+
+    /// <summary>
+    /// Provides base functionality for an engine that can parse and render Lava Templates.
+    /// </summary>
     //TODO: Implement IRockStartup.
     public abstract class LavaEngineBase : ILavaEngine // ,IRockStartup
     {
@@ -69,11 +73,6 @@ namespace Rock.Lava
 
             return internalName.Trim().ToLower();
         }
-
-        //public abstract void RegisterStaticShortcode( string name, Func<string, IRockShortcode> shortcodeFactoryMethod );
-
-
-        //public abstract void RegisterDynamicShortcode( string name, Func<string, DynamicShortcodeDefinition> shortcodeFactoryMethod );
 
         public void RegisterDynamicShortcode( string name, Func<string, DynamicShortcodeDefinition> shortcodeFactoryMethod )
         {
