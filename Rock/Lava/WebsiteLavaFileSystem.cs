@@ -25,14 +25,78 @@ namespace Rock.Lava
     /// <summary>
     /// The file system used to retrieve Lava templates referenced by an include tag.
     /// </summary>
-    public class WebsiteLavaFileSystem : LavaFileSystemBase
+    public class WebsiteLavaFileSystem : ILavaFileSystem
     {
+        /// <summary>
+        /// Gets or sets the root.
+        /// </summary>
+        /// <value>
+        /// The root.
+        /// </value>
+        public string Root { get; set; }
+
+        /// <summary>
+        /// Called by Liquid to retrieve a template file
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="templateName"></param>
+        /// <returns></returns>
+        /// <exception cref="LavaException">LavaFileSystem Template Not Found</exception>
+        public string ReadTemplateFile( ILavaContext context, string templateName )
+        {
+            string templatePath = (string)context[templateName];
+
+            // Try to find exact file specified
+            var resolvedPath = ResolveTemplatePath( templatePath );
+
+            var file = new FileInfo( resolvedPath );
+            if ( file.Exists )
+            {
+                return File.ReadAllText( file.FullName );
+            }
+
+            // If requested template file does not include an extension
+            if ( string.IsNullOrWhiteSpace( file.Extension ) )
+            {
+                // Try to find file with .lava extension
+                string filePath = file.FullName + ".lava";
+                if ( File.Exists( filePath ) )
+                {
+                    return File.ReadAllText( filePath );
+                }
+
+                // Try to find file with .liquid extension
+                filePath = file.FullName + ".liquid";
+                if ( File.Exists( filePath ) )
+                {
+                    return File.ReadAllText( filePath );
+                }
+
+                // If file still not found, try prefixing filename with an underscore
+                if ( !file.Name.StartsWith( "_" ) )
+                {
+                    filePath = Path.Combine( file.DirectoryName, string.Format( "_{0}.lava", file.Name ) );
+                    if ( File.Exists( filePath ) )
+                    {
+                        return File.ReadAllText( filePath );
+                    }
+                    filePath = Path.Combine( file.DirectoryName, string.Format( "_{0}.liquid", file.Name ) );
+                    if ( File.Exists( filePath ) )
+                    {
+                        return File.ReadAllText( filePath );
+                    }
+                }
+            }
+
+            throw new LavaException( $"LavaFileSystem Template Not Found. The file \"{templatePath}\" does not exist." );
+        }
+
         /// <summary>
         /// Resolves the absolute path for the input template.
         /// </summary>
         /// <param name="templatePath">The template path.</param>
         /// <returns></returns>
-        protected override string OnResolveTemplatePath( string templatePath )
+        private string ResolveTemplatePath( string templatePath )
         {
             if ( templatePath == null )
             {

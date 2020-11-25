@@ -1,11 +1,25 @@
-﻿using System;
+﻿// <copyright>
+// Copyright by the Spark Development Network
+//
+// Licensed under the Rock Community License (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.rockrms.com/license
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// </copyright>
+//
+using System;
 using System.Collections.Generic;
 using Rock.Lava.DotLiquid;
 using Rock.Lava.Blocks;
 using System.IO;
 using Rock.Lava.Fluid;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Primitives;
 
 namespace Rock.Lava
 {
@@ -13,7 +27,7 @@ namespace Rock.Lava
     /// <summary>
     /// Provides access to core functions for the Rock Lava Engine.
     /// </summary>
-    public static class LavaEngine
+    public static partial class LavaEngine
     {
         public static string ShortcodeNameSuffix = "_sc";
 
@@ -59,47 +73,18 @@ namespace Rock.Lava
             {
                 engine = new FluidEngine();
 
-                fileSystem = new
+                fileSystem = new FluidFileSystem( fileSystem );
             }
             else
             {
                 engine = new DotLiquidEngine();
+
+                fileSystem = new DotLiquidFileSystem( fileSystem );
             }
 
             engine.Initialize( fileSystem, filterImplementationTypes );
 
             _instance = engine;
-        }
-
-        /// <summary>
-        /// An implementation of a Lava File System for the Fluid framework.
-        /// </summary>
-        public class FluidLavaFileSystem : IFileProvider
-        {
-            private ILavaFileSystem _fileSystem = null;
-
-            public FluidLavaFileSystem( ILavaFileSystem fileSystem )
-            {
-                _fileSystem = fileSystem;
-            }
-
-            public IDirectoryContents GetDirectoryContents( string subpath )
-            {
-                // Directory listing is not supported.
-                return null;
-
-            }
-
-            public IFileInfo GetFileInfo( string subpath )
-            {
-                var text = _fileSystem.ReadTemplateFile( null, subpath );
-            }
-
-            public IChangeToken Watch( string filter )
-            {
-                // File system monitoring is not supported.
-                return null;
-            }
         }
 
         public static ILavaEngine Instance

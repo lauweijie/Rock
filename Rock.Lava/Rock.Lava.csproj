@@ -188,10 +188,11 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Core\Blocks\LavaSecurityHelper.cs" />
     <Compile Include="Core\Blocks\RockLavaBlockBase.cs" />
-    <Compile Include="Core\LavaFileSystemBase.cs" />
     <Compile Include="Core\Shortcodes\DynamicShortcode.cs" />
     <Compile Include="Core\Shortcodes\ILiquidFrameworkRenderer.cs" />
     <Compile Include="Core\Shortcodes\RockLavaShortcodeBase.cs" />
+    <Compile Include="Engine\NullFileSystem.cs" />
+    <Compile Include="Implementations\Fluid\FluidFileSystem.cs" />
     <Compile Include="Implementations\Fluid\FluidLavaWebApplicationFileProvider.cs" />
     <Compile Include="Engine\LavaEngine.cs" />
     <Compile Include="Engine\LavaEngineBase.cs" />

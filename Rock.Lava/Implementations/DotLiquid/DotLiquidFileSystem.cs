@@ -17,11 +17,12 @@
 using DotLiquid;
 using DotLiquid.Exceptions;
 using DotLiquid.FileSystems;
+using Rock.Lava.DotLiquid;
 
 namespace Rock.Lava
 {
     /// <summary>
-    /// Wraps a LavaFileSystem component so that it can be used as a file provider for the  DotLiquid framework.
+    /// Wraps a LavaFileSystem component so that it can be used as a file provider for the DotLiquid framework.
     /// </summary>
     internal class DotLiquidFileSystem : ILavaFileSystem, IFileSystem
     {
@@ -41,13 +42,19 @@ namespace Rock.Lava
 
         string IFileSystem.ReadTemplateFile( Context context, string templateName )
         {
+            // Trim delimiters from the template name.
+            templateName = templateName ?? string.Empty;
+            templateName = templateName.Trim( @"'""".ToCharArray() );
+
             try
             {
-                return _lavaFileSystem.ReadTemplateFile( context as ILavaContext, templateName );
+                var lavaContext = new DotLiquidLavaContext( context );
+
+                return _lavaFileSystem.ReadTemplateFile( lavaContext, templateName );
             }
             catch
             {
-                throw new FileSystemException( "LavaFileSystem Template Not Found", templateName );
+                throw new LavaException( "LavaFileSystem ReadTemplate failed. The template \"{0}\" could not loaded.", templateName );
             }
 
         }
@@ -63,51 +70,7 @@ namespace Rock.Lava
         /// <exception cref="FileSystemException">LavaFileSystem Template Not Found</exception>
         public string ReadTemplateFile( ILavaContext context, string templateName )
         {
-            string templatePath = (string)context[templateName];
-
-            // Try to find exact file specified
-            var resolvedPath = this.OnResolveTemplatePath( templatePath );
-
-            var file = new FileInfo( resolvedPath );
-            if ( file.Exists )
-            {
-                return File.ReadAllText( file.FullName );
-            }
-
-            // If requested template file does not include an extension
-            if ( string.IsNullOrWhiteSpace( file.Extension ) )
-            {
-                // Try to find file with .lava extension
-                string filePath = file.FullName + ".lava";
-                if ( File.Exists( filePath ) )
-                {
-                    return File.ReadAllText( filePath );
-                }
-
-                // Try to find file with .liquid extension
-                filePath = file.FullName + ".liquid";
-                if ( File.Exists( filePath ) )
-                {
-                    return File.ReadAllText( filePath );
-                }
-
-                // If file still not found, try prefixing filename with an underscore
-                if ( !file.Name.StartsWith( "_" ) )
-                {
-                    filePath = Path.Combine( file.DirectoryName, string.Format( "_{0}.lava", file.Name ) );
-                    if ( File.Exists( filePath ) )
-                    {
-                        return File.ReadAllText( filePath );
-                    }
-                    filePath = Path.Combine( file.DirectoryName, string.Format( "_{0}.liquid", file.Name ) );
-                    if ( File.Exists( filePath ) )
-                    {
-                        return File.ReadAllText( filePath );
-                    }
-                }
-            }
-
-            throw new FileSystemException( "LavaFileSystem Template Not Found", templatePath );
+            return _lavaFileSystem.ReadTemplateFile( context, templateName );
         }
 
     }

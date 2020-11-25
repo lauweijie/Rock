@@ -83,9 +83,10 @@ namespace Rock.Lava.DotLiquid
 
             if ( fileSystem == null )
             {
-                fileSystem = 
+                fileSystem = new DotLiquidFileSystem( new NullFileSystem() );
             }
-            Template.FileSystem = new DotLiquidLavaFileSystem( fileSystem );
+
+            Template.FileSystem = new DotLiquidFileSystem( fileSystem );
 
             Template.RegisterSafeType( typeof( Enum ), o => o.ToString() );
             Template.RegisterSafeType( typeof( DBNull ), o => null );
@@ -97,7 +98,7 @@ namespace Rock.Lava.DotLiquid
             Template.FilterContextParameterTransformer = ( context ) =>
             {
                 // Wrap the DotLiquid context in a framework-agnostic Lava context.
-                return new DotLiquidLavaContext( context as Context );
+                return new DotLiquidLavaContext( context );
             };
 
             // Register custom filters last, so they can override built-in filters of the same name.

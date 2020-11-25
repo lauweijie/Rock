@@ -16,6 +16,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Rock.Lava;
@@ -60,7 +61,21 @@ namespace Rock.Tests.Integration.Lava
 
         public string ReadTemplateFile( ILavaContext context, string templateName )
         {
-            throw new NotImplementedException();
+            var fi = GetFileInfo( templateName );
+            var sb = new StringBuilder();
+
+            using ( var fs = fi.CreateReadStream() )
+            {
+                byte[] byteArray = new byte[1024];
+                var fileContent = new UTF8Encoding( true );
+
+                while ( fs.Read( byteArray, 0, byteArray.Length ) > 0 )
+                {
+                     sb.Append( fileContent.GetString( byteArray ) );
+                }
+            }
+
+            return sb.ToString().Trim('\x0');
         }
     }
 }

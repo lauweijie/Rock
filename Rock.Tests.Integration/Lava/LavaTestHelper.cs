@@ -38,10 +38,10 @@ namespace Rock.Tests.Integration.Lava
 
             if ( engineType == LavaEngineTypeSpecifier.DotLiquid )
             {
-                fileSystem = new LavaFileSystem( new MockFileProvider() );
+                fileSystem = new MockFileProvider();
             }
 
-            global::Rock.Lava.LavaEngine.Initialize( engineType, null, new List<Type> { typeof( RockFilters ) } );
+            global::Rock.Lava.LavaEngine.Initialize( engineType, fileSystem, new List<Type> { typeof( RockFilters ) } );
 
             var engine = global::Rock.Lava.LavaEngine.Instance;
 

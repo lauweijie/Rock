@@ -16,81 +16,85 @@
 //
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rock.Lava;
+using Rock.Tests.Shared;
 
 namespace Rock.Tests.Integration.Lava
 {
     [TestClass]
     public class LavaFileSystemTests : LavaIntegrationTestBase
     {
-        #region Constructors
+        //#region Constructors
 
-        [ClassInitialize]
-        public static void Initialize( TestContext context )
-        {
-            //_helper.LavaEngine.RegisterSafeType( typeof( TestPerson ) );
-            //_helper.LavaEngine.RegisterSafeType( typeof( TestCampus ) );
+        //[ClassInitialize]
+        //public static void Initialize( TestContext context )
+        //{
+        //    //_helper.LavaEngine.RegisterSafeType( typeof( TestPerson ) );
+        //    //_helper.LavaEngine.RegisterSafeType( typeof( TestCampus ) );
 
-        }
+        //}
 
-        #endregion
+        //#endregion
 
         /// <summary>
         /// Referencing a valid property of an input object should return the property value.
         /// </summary>
         [TestMethod]
-        public void LavaFileSystem_SimpleFileAccess_ReturnsFileContents()
-        {
-            throw new System.Exception();
-
-            System.Diagnostics.Debug.Print( _helper.GetTestPersonTedDecker().ToString() );
-
-            var mergeValues = new LavaDictionary { { "CurrentPerson", _helper.GetTestPersonTedDecker() } };
-
-            _helper.AssertTemplateOutput( "Decker", "{{ CurrentPerson.LastName }}", mergeValues );
-        }
-
-        [TestMethod]
-        public void IncludeSatement_ShouldThrowFileNotFoundException_IfTheFileProviderIsNotPresent()
+        public void IncludeStatement_ForFileContainingMergeFields_ReturnsMergedOutput()
         {
             var fileSystem = GetMockFileProvider();
 
             _helper.LavaEngine.Initialize( fileSystem );
 
             var input = @"
-{% include '_Partial.liquid' %}
+Name: Ted Decker
+
+** Contact
+{% include '_contact.lava' %}
+**
 ";
 
-            var mergeValues = new LavaDictionary { { "color", "red" }, { "shape", "circle" } };
+            var mergeValues = new LavaDictionary { { "mobilePhone", "(623) 555-3323" }, { "homePhone", "(623) 555-3322" }, { "workPhone", "(623) 555-2444" }, { "email", "ted@rocksolidchurch.com" } };
 
-            var expectedOutput = "";
+            var expectedOutput = @"
+Name: Ted Decker
 
-            _helper.AssertTemplateOutput( expectedOutput, input, mergeValues );
+** Contact
+Mobile: (623) 555-3323
+Home: (623) 555-3322
+Work : (623) 555-2444
+Email: ted@rocksolidchurch.com
+**
+";
 
+            _helper.AssertTemplateOutput( expectedOutput, input, mergeValues, ignoreWhitespace:true );
+        }
 
-            //var expression = new LiteralExpression( new StringValue( "_Partial.liquid" ) );
+        [TestMethod]
+        public void IncludeStatement_ShouldThrowFileNotFoundException_IfTheFileProviderIsNotPresent()
+        {
+            _helper.LavaEngine.Initialize( null );
 
-            //var sw = new StringWriter();
+            var input = @"
+{% include '_unknown.lava' %}
+";
 
-            //try
-            //{
-            //    await new IncludeStatement( expression ).WriteToAsync( sw, HtmlEncoder.Default, new TemplateContext() );
-            //    Assert.True( false );
-            //}
-            //catch ( FileNotFoundException )
-            //{
-            //    return;
-            //}
+            var output = _helper.GetTemplateOutput( input );
 
-            //Assert.True( false );
+            Assert.That.IsTrue( output.Contains( "LavaFileSystem ReadTemplate failed." ) );
         }
 
         private MockFileProvider GetMockFileProvider()
         {
             var fileProvider = new MockFileProvider();
-            fileProvider.Add( "_Partial.liquid", @"{{ 'Partial Content' }}
-Partials: '{{ Partials }}'
-color: '{{ color }}'
-shape: '{{ shape }}'" );
+
+            var fileContent = @"
+Mobile: {{ mobilePhone }}
+Home: {{ homePhone }} 
+Work: {{ workPhone }}
+Email: {{ email }}
+";
+
+            fileProvider.Add( "_contact.lava", fileContent );
 
             return fileProvider;
         }
