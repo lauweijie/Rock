@@ -52,16 +52,16 @@ namespace Rock.Lava
             }
         }
 
-        public static void InitializeDotLiquidFramework( ILavaFileSystem fileSystem = null, IList<Type> filterImplementationTypes = null )
-        {
-            _liquidFramework = LavaEngineTypeSpecifier.DotLiquid;
+        //public static void InitializeDotLiquidFramework( ILavaFileSystem fileSystem = null, IList<Type> filterImplementationTypes = null )
+        //{
+        //    _liquidFramework = LavaEngineTypeSpecifier.DotLiquid;
 
-            var liquidEngine = new DotLiquidEngine();
+        //    var liquidEngine = new DotLiquidEngine();
 
-            liquidEngine.Initialize( fileSystem, filterImplementationTypes );
+        //    liquidEngine.Initialize( fileSystem, filterImplementationTypes );
 
-            _instance = liquidEngine;
-        }
+        //    _instance = liquidEngine;
+        //}
 
         public static void Initialize( LavaEngineTypeSpecifier? engineType, ILavaFileSystem fileSystem = null, IList<Type> filterImplementationTypes = null )
         {
@@ -93,15 +93,8 @@ namespace Rock.Lava
             {
                 if ( _instance == null )
                 {
-                    if ( _liquidFramework == LavaEngineTypeSpecifier.DotLiquid )
-                    {
-                        InitializeDotLiquidFramework();
-                    }
-                    else
-                    {
-                        throw new Exception( "Liquid Framework not implemented." );
-                        // TODO: Add option to instantiate Fluid engine.
-                    }                    
+                    // Initialize a default instance.
+                    Initialize( _liquidFramework );
                 }
 
                 return _instance;

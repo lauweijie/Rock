@@ -73,5 +73,9 @@ namespace Rock.Lava
             return _lavaFileSystem.ReadTemplateFile( context, templateName );
         }
 
+        public bool FileExists( string filePath )
+        {
+            return _lavaFileSystem.FileExists( filePath );
+        }
     }
 }

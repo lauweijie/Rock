@@ -14,13 +14,23 @@
 // limitations under the License.
 // </copyright>
 //
-
 namespace Rock.Lava
 {
+    /// <summary>
+    /// A Lava file system provides a means of accessing external files from a template.
+    /// A file system implementation is required for the Liquid "{% include %}" command to load partial templates during the rendering process.
+    /// </summary>
     public interface ILavaFileSystem
     {
         /// <summary>
-        /// Called by Lava to retrieve a template file.
+        /// Returns a flag indicating if the specified file exists.
+        /// </summary>
+        /// <param name="filePath">A relative file path.</param>
+        /// <returns></returns>
+        bool FileExists( string filePath );
+
+        /// <summary>
+        /// Called by the Lava Engine to read the contents of a template file.
         /// </summary>
         /// <param name="templatePath"></param>
         /// <returns></returns>

@@ -34,16 +34,13 @@ namespace Rock.Tests.Integration.Lava
         {
             engineType = engineType ?? LavaEngineTypeSpecifier.DotLiquid;
 
-            ILavaFileSystem fileSystem = null;
-
-            if ( engineType == LavaEngineTypeSpecifier.DotLiquid )
-            {
-                fileSystem = new MockFileProvider();
-            }
+            ILavaFileSystem fileSystem = new MockFileProvider();
 
             global::Rock.Lava.LavaEngine.Initialize( engineType, fileSystem, new List<Type> { typeof( RockFilters ) } );
 
             var engine = global::Rock.Lava.LavaEngine.Instance;
+
+            engine.ExceptionHandlingStrategy = ExceptionHandlingStrategySpecifier.RenderToOutput;
 
             RegisterBlocks( engine );
             RegisterTags( engine );
@@ -229,9 +226,7 @@ namespace Rock.Tests.Integration.Lava
 
             inputTemplate = inputTemplate ?? string.Empty;
 
-            bool isValidTemplate = global::Rock.Lava.LavaEngine.Instance.TryRender( inputTemplate.Trim(), out outputString, mergeValues );
-
-            Assert.That.True( isValidTemplate, "Lava Template is invalid." );
+            global::Rock.Lava.LavaEngine.Instance.TryRender( inputTemplate.Trim(), out outputString, mergeValues );
 
             return outputString;
         }

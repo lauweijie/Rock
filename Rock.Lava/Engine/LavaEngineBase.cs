@@ -364,12 +364,28 @@ namespace Rock.Lava
 
         protected void ProcessException( Exception ex )
         {
-            if ( this.ThrowExceptions )
-            {
-                throw ex;
-            }
+            string discardedOutput;
+
+            ProcessException( ex, out discardedOutput );
         }
 
-        public bool ThrowExceptions { get; set; } = true;
+        protected void ProcessException( Exception ex, out string message )
+        {
+            if ( this.ExceptionHandlingStrategy == ExceptionHandlingStrategySpecifier.RenderToOutput )
+            {
+                message = ex.Message;
+            }
+            else if ( this.ExceptionHandlingStrategy == ExceptionHandlingStrategySpecifier.Ignore )
+            {
+                // We should probably log the message here rather than failing silently.
+                message = null;
+            }
+            else
+            {
+                throw ex;
+            }            
+        }
+
+        public ExceptionHandlingStrategySpecifier ExceptionHandlingStrategy { get; set; } = ExceptionHandlingStrategySpecifier.RenderToOutput;
     }
 }

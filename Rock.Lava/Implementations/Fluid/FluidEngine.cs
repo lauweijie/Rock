@@ -82,6 +82,14 @@ namespace Rock.Lava.Fluid
             // Register all Types that implement ILavaDataObject as safe to render.
             RegisterSafeType( typeof( Rock.Lava.ILavaDataObject ) );
 
+            // Set the file provider to resolve included file references.
+            if ( fileSystem == null )
+            {
+                fileSystem = new LavaNullFileSystem();
+            }
+
+            TemplateContext.GlobalFileProvider = new FluidFileSystem( fileSystem );
+
         }
         /// <summary>
         /// This method hides the snake-case filters that are registered
@@ -461,9 +469,8 @@ namespace Rock.Lava.Fluid
             }
             catch ( Exception ex )
             {
-                ProcessException( ex );
+                ProcessException( ex, out output );
 
-                output = null;
                 return false;
             }
         }

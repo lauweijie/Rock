@@ -36,6 +36,18 @@ namespace Rock.Lava
         public string Root { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public bool FileExists( string filePath )
+        {
+            filePath = GetMatchingFileFromPath( filePath );
+
+            return !string.IsNullOrEmpty( filePath );
+        }
+
+        /// <summary>
         /// Called by Liquid to retrieve a template file
         /// </summary>
         /// <param name="context"></param>
@@ -89,6 +101,59 @@ namespace Rock.Lava
             }
 
             throw new LavaException( $"LavaFileSystem Template Not Found. The file \"{templatePath}\" does not exist." );
+        }
+
+        private string GetMatchingFileFromPath( string fullFilePath )
+        {
+            //string templatePath = (string)context[templateName];
+
+            // Try to find exact file specified
+            //var resolvedPath = ResolveTemplatePath( templatePath );
+
+            var file = new FileInfo( fullFilePath );
+
+            if ( file.Exists )
+            {
+                return file.FullName; // File.ReadAllText( file.FullName );
+            }
+
+            // If requested template file does not include an extension
+            if ( string.IsNullOrWhiteSpace( file.Extension ) )
+            {
+                // Try to find file with .lava extension
+                string filePath = file.FullName + ".lava";
+                if ( File.Exists( filePath ) )
+                {
+                    return filePath; // return File.ReadAllText( filePath );
+                }
+
+                // Try to find file with .liquid extension
+                filePath = file.FullName + ".liquid";
+                if ( File.Exists( filePath ) )
+                {
+                    return filePath; // return File.ReadAllText( filePath );
+                }
+
+                // If file still not found, try prefixing filename with an underscore
+                if ( !file.Name.StartsWith( "_" ) )
+                {
+                    filePath = Path.Combine( file.DirectoryName, string.Format( "_{0}.lava", file.Name ) );
+                    if ( File.Exists( filePath ) )
+                    {
+                        return filePath; // return File.ReadAllText( filePath );
+                        //return File.ReadAllText( filePath );
+                    }
+                    filePath = Path.Combine( file.DirectoryName, string.Format( "_{0}.liquid", file.Name ) );
+                    if ( File.Exists( filePath ) )
+                    {
+                        return filePath; // return File.ReadAllText( filePath );
+                        return File.ReadAllText( filePath );
+                    }
+                }
+            }
+
+            return null;
+
         }
 
         /// <summary>

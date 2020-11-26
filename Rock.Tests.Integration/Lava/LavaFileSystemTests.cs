@@ -70,9 +70,11 @@ Email: ted@rocksolidchurch.com
         }
 
         [TestMethod]
-        public void IncludeStatement_ShouldThrowFileNotFoundException_IfTheFileProviderIsNotPresent()
+        public void IncludeStatement_ForNonexistentFile_ShouldRenderError()
         {
-            _helper.LavaEngine.Initialize( null );
+            var fileSystem = GetMockFileProvider();
+
+            _helper.LavaEngine.Initialize( fileSystem );
 
             var input = @"
 {% include '_unknown.lava' %}
@@ -80,7 +82,21 @@ Email: ted@rocksolidchurch.com
 
             var output = _helper.GetTemplateOutput( input );
 
-            Assert.That.IsTrue( output.Contains( "LavaFileSystem ReadTemplate failed." ) );
+            Assert.That.IsTrue( output.Contains( "File Load Failed." ) );
+        }
+
+        [TestMethod]
+        public void IncludeStatement_ShouldRenderError_IfFileSystemIsNotConfigured()
+        {
+            _helper.LavaEngine.Initialize( null );
+
+            var input = @"
+{% include '_template.lava' %}
+";
+
+            var output = _helper.GetTemplateOutput( input );
+
+            Assert.That.IsTrue( output.Contains( "File Load Failed." ) );
         }
 
         private MockFileProvider GetMockFileProvider()

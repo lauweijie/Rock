@@ -83,7 +83,7 @@ namespace Rock.Lava.DotLiquid
 
             if ( fileSystem == null )
             {
-                fileSystem = new DotLiquidFileSystem( new NullFileSystem() );
+                fileSystem = new DotLiquidFileSystem( new LavaNullFileSystem() );
             }
 
             Template.FileSystem = new DotLiquidFileSystem( fileSystem );
@@ -235,9 +235,8 @@ namespace Rock.Lava.DotLiquid
             }
             catch ( Exception ex )
             {
-                ProcessException( ex );
+                ProcessException( ex, out output );
 
-                output = null;
                 return false;
             }
         }

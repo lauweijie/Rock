@@ -62,6 +62,12 @@ namespace Rock.Tests.Integration.Lava
         public string ReadTemplateFile( ILavaContext context, string templateName )
         {
             var fi = GetFileInfo( templateName );
+
+            if ( fi == null )
+            {
+                return string.Empty;
+            }
+
             var sb = new StringBuilder();
 
             using ( var fs = fi.CreateReadStream() )
@@ -76,6 +82,11 @@ namespace Rock.Tests.Integration.Lava
             }
 
             return sb.ToString().Trim('\x0');
+        }
+
+        public bool FileExists( string filePath )
+        {
+            return _files.ContainsKey( filePath );
         }
     }
 }
