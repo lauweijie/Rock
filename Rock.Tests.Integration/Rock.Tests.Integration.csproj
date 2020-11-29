@@ -147,16 +147,16 @@
     <Compile Include="Lava\Engine\CachingTests.cs" />
     <Compile Include="Lava\Filters\DateFilterTests.cs" />
     <Compile Include="Lava\Filters\NumericFilterTests.cs" />
-    <Compile Include="Lava\LavaFileSystemTests.cs" />
+    <Compile Include="Lava\FileSystem\LavaFileSystemTests.cs" />
     <Compile Include="Lava\LavaTestHelper.cs" />
     <Compile Include="Lava\LavaIntegrationTestBase.cs" />
-    <Compile Include="Lava\MockFileInfo.cs" />
-    <Compile Include="Lava\MockFileProvider.cs" />
-    <Compile Include="Lava\ShortcodeCodeTests.cs" />
-    <Compile Include="Lava\CommandTests.cs" />
-    <Compile Include="Lava\ShortcodeTemplateTests.cs" />
+    <Compile Include="Lava\FileSystem\MockFileInfo.cs" />
+    <Compile Include="Lava\FileSystem\MockFileProvider.cs" />
+    <Compile Include="Lava\Commands\ShortcodeCodeTests.cs" />
+    <Compile Include="Lava\Commands\CommandTests.cs" />
+    <Compile Include="Lava\Commands\ShortcodeTemplateTests.cs" />
     <Compile Include="Lava\SqlTests.cs" />
-    <Compile Include="Lava\RockEntityTests.cs" />
+    <Compile Include="Lava\Commands\RockEntityTests.cs" />
     <Compile Include="Model\IdentityVerificationCodeTests.cs" />
     <Compile Include="Model\IdentityVerificationTests.cs" />
     <Compile Include="Rest\ControllersTests\InteractionsControllerTests.cs" />
@@ -220,8 +220,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Lava\lava-dotliquid-engine.runsettings" />
-    <None Include="Lava\lava-fluid-engine.runsettings" />
+    <None Include="settings\lava-dotliquid-engine.runsettings" />
+    <None Include="settings\lava-fluid-engine.runsettings" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
