@@ -342,12 +342,12 @@ usernameTextbox.blur(function () {{
                 success: function (getData, status, xhr) {{
 
                     if (getData) {{
-                        usernameUnavailable.html('That ' + usernameFieldLabel + ' is available.');
+                        usernameUnavailable.html(usernameFieldLabel.toLowerCase() + ' is available.');
                         usernameUnavailable.addClass('alert-success');
                         usernameUnavailable.removeClass('alert-warning');
                     }} else {{
                         availabilityMessageRow.show();
-                        usernameUnavailable.html('That ' + usernameFieldLabel + ' is already taken.');
+                        usernameUnavailable.html(usernameFieldLabel.toLowerCase() + ' is already taken.');
                         usernameUnavailable.addClass('alert-warning');
                         usernameUnavailable.removeClass('alert-success');
                     }}
